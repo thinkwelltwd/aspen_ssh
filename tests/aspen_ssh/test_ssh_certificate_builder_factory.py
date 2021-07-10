@@ -1,0 +1,42 @@
+import pytest
+
+from aspen_ssh.certificate_authorities.ssh_certificate_authority_factory import (
+    get_ssh_certificate_authority,
+)
+from aspen_ssh.certificates.rsa_certificate_builder import (
+    RSACertificateBuilder,
+    SSHCertifiedKeyType,
+)
+from aspen_ssh.certificates.ed25519_certificate_builder import ED25519CertificateBuilder
+from aspen_ssh.certificates.ssh_certificate_builder import SSHCertificateType
+from aspen_ssh.certificates.ssh_certificate_builder_factory import get_ssh_certificate_builder
+from tests.aspen_ssh.vectors import (
+    RSA_CA_PRIVATE_KEY,
+    RSA_CA_PRIVATE_KEY_PASSWORD,
+    EXAMPLE_RSA_PUBLIC_KEY,
+    EXAMPLE_ED25519_PUBLIC_KEY,
+)
+
+
+def test_valid_rsa_request():
+    ca = get_ssh_certificate_authority(RSA_CA_PRIVATE_KEY, RSA_CA_PRIVATE_KEY_PASSWORD)
+    cert_builder = get_ssh_certificate_builder(ca, SSHCertificateType.USER, EXAMPLE_RSA_PUBLIC_KEY)
+    cert = cert_builder.get_cert_file()
+    assert isinstance(cert_builder, RSACertificateBuilder)
+    assert cert.startswith(SSHCertifiedKeyType.RSA)
+
+
+def test_valid_ed25519_request():
+    ca = get_ssh_certificate_authority(RSA_CA_PRIVATE_KEY, RSA_CA_PRIVATE_KEY_PASSWORD)
+    cert_builder = get_ssh_certificate_builder(
+        ca, SSHCertificateType.USER, EXAMPLE_ED25519_PUBLIC_KEY
+    )
+    cert = cert_builder.get_cert_file()
+    assert isinstance(cert_builder, ED25519CertificateBuilder)
+    assert cert.startswith(SSHCertifiedKeyType.ED25519)
+
+
+def test_invalid_key_request():
+    with pytest.raises(TypeError):
+        ca = get_ssh_certificate_authority(RSA_CA_PRIVATE_KEY, RSA_CA_PRIVATE_KEY_PASSWORD)
+        get_ssh_certificate_builder(ca, SSHCertificateType.USER, 'bogus')

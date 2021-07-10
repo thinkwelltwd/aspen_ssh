@@ -1,0 +1,6 @@
+-e .
+coverage
+cryptography
+pytest
+pytest-mock
+six
