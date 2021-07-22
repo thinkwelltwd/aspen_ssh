@@ -3,19 +3,27 @@
     :copyright: (c) 2016 by Netflix Inc., see AUTHORS for more
     :license: Apache, see LICENSE for more details.
 """
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.backends.openssl.rsa import RSAPrivateKey
+from typing import Literal, Union
+
 from aspen_ssh.certificate_authorities.ssh_certificate_authority import (
     SSHCertificateAuthority,
     SSHCertificateSignatureKeyType,
 )
 from aspen_ssh.public_keys import SSHPublicKeyType
 from aspen_ssh.protocol.ssh_protocol import pack_ssh_mpint, pack_ssh_string
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
 
 
 class RSACertificateAuthority(SSHCertificateAuthority):
 
-    def __init__(self, pem_private_key, private_key_password=None, cert_type="sha2"):
+    def __init__(
+        self,
+        pem_private_key: Union[bytes, RSAPrivateKey],
+        private_key_password: str = None,
+        cert_type: Literal['sha2', 'sha1'] = 'sha2',
+    ):
         """
         RSA Certificate Authority used to sign certificates.
 
@@ -23,6 +31,7 @@ class RSACertificateAuthority(SSHCertificateAuthority):
         password, but that is not required.
         :param private_key_password: Password to decrypt the PEM RSA Private Key, if it is
         encrypted.  Which it should be.
+        :param cert_type: Sha version expected ("sha2" or "sha1")
         """
         super().__init__(pem_private_key, private_key_password)
 

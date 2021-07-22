@@ -8,7 +8,11 @@ rsa-sha2-512 to support SHA2 public key signing algorithm
 """
 from aspen_ssh.protocol.ssh_protocol import pack_ssh_string
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import ed25519, rsa
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from typing import Union
+
+PrivateKeys = Union[bytes, ed25519.Ed25519PrivateKey, rsa.RSAPrivateKey]
 
 
 class SSHCertificateSignatureKeyType:
@@ -17,13 +21,9 @@ class SSHCertificateSignatureKeyType:
     ED25519 = 'ssh-ed25519'
 
 
-class SSHCertificateAuthorityPrivateKeyType(object):
-    RSA = '-----BEGIN RSA PRIVATE KEY-----\n'
-
-
 class SSHCertificateAuthority:
 
-    def __init__(self, pem_private_key: bytes, private_key_password: str = None):
+    def __init__(self, pem_private_key: PrivateKeys, private_key_password: str = None):
         """
         RSA Certificate Authority used to sign certificates.
 
@@ -35,9 +35,12 @@ class SSHCertificateAuthority:
         self.public_key_type = None
         self.signing_key_type = None
 
-        self.private_key = load_pem_private_key(
-            pem_private_key, private_key_password, default_backend()
-        )
+        if isinstance(pem_private_key, bytes):
+            self.private_key = load_pem_private_key(
+                pem_private_key, private_key_password, default_backend()
+            )
+        else:
+            self.private_key = pem_private_key
 
     def sign(self, body):
         """
@@ -68,7 +71,7 @@ class SSHCertificateAuthority:
 
 
 __all__ = (
-    'SSHCertificateAuthorityPrivateKeyType',
+    'PrivateKeys',
     'SSHCertificateSignatureKeyType',
     'SSHCertificateAuthority',
 )

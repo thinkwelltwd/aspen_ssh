@@ -12,12 +12,9 @@ develop:
 
 clean:
 	@echo "--> Cleaning pyc and build files"
-	rm -fr build/
-	rm -fr dist/
-	rm -fr .eggs/
-	rm -rf ./htmlcov
-	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -f {} +
+	sudo rm -fr build/ dist/ .eggs/ ./htmlcov
+	sudo find . -name '*.egg-info' -exec rm -fr {} +
+	sudo find . -name '*.egg' -exec rm -f {} +
 
 coverage:
 	@echo "--> Running Python tests with coverage"

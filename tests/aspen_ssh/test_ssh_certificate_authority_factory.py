@@ -26,7 +26,9 @@ def test_valid_key_valid_password():
 
 
 def test_valid_key_valid_password_sha1():
-    ca = get_ssh_certificate_authority(private_key=RSA_SHA1_CA_PRIVATE_KEY, password=RSA_CA_PRIVATE_KEY_PASSWORD, cert_type="sha1")
+    ca = get_ssh_certificate_authority(
+        private_key=RSA_SHA1_CA_PRIVATE_KEY, password=RSA_CA_PRIVATE_KEY_PASSWORD, cert_type="sha1"
+    )
     assert isinstance(ca, RSACertificateAuthority)
     assert SSHPublicKeyType.RSA == ca.public_key_type
     assert SSHCertificateSignatureKeyType.RSA == ca.signing_key_type
@@ -42,7 +44,9 @@ def test_valid_key_not_encrypted():
 
 
 def test_valid_key_not_encrypted_sha1():
-    ca = get_ssh_certificate_authority(private_key=RSA_CA_PRIVATE_KEY_NOT_ENCRYPTED, cert_type="sha1")
+    ca = get_ssh_certificate_authority(
+        private_key=RSA_CA_PRIVATE_KEY_NOT_ENCRYPTED, cert_type="sha1"
+    )
     assert SSHPublicKeyType.RSA == ca.public_key_type
     assert SSHCertificateSignatureKeyType.RSA == ca.signing_key_type
     assert 65537 == ca.e
@@ -64,5 +68,5 @@ def test_valid_key_not_encrypted_invalid_pass():
 
 
 def test_invalid_key():
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         get_ssh_certificate_authority(b'bogus')

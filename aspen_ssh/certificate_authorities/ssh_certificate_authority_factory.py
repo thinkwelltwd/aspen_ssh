@@ -3,19 +3,23 @@
     :copyright: (c) 2016 by Netflix Inc., see AUTHORS for more
     :license: Apache, see LICENSE for more details.
 """
+from typing import Literal
+
 from aspen_ssh.certificate_authorities import (
+    Ed25519CertificateAuthority,
     RSACertificateAuthority,
     SSHCertificateAuthority,
+    PrivateKeys,
 )
-from aspen_ssh.certificate_authorities.ssh_certificate_authority import (
-    SSHCertificateAuthorityPrivateKeyType,
-)
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import ed25519, rsa
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 
 def get_ssh_certificate_authority(
-        private_key: bytes,
-        password: str = None,
-        cert_type="sha2",
+    private_key: PrivateKeys,
+    password: str = None,
+    cert_type: Literal['sha2', 'sha1'] = 'sha2',
 ) -> SSHCertificateAuthority:
     """
     Returns the proper SSHCertificateAuthority instance based off the private_key type.
@@ -26,17 +30,25 @@ def get_ssh_certificate_authority(
     :param cert_type: Sha version expected ("sha2" or "sha1")
     :return: An SSHCertificateAuthority instance.
     """
-    if private_key.decode('ascii').startswith(SSHCertificateAuthorityPrivateKeyType.RSA):
-        return RSACertificateAuthority(
-            pem_private_key=private_key,
-            private_key_password=password,
-            cert_type=cert_type,
-        )
+    if isinstance(private_key, bytes):
+        private_key = load_pem_private_key(private_key, password, default_backend())
+
+    ca_data = {
+        'pem_private_key': private_key,
+        'private_key_password': password,
+    }
+
+    if isinstance(private_key, ed25519.Ed25519PrivateKey):
+        return Ed25519CertificateAuthority(**ca_data)
+
+    if isinstance(private_key, rsa.RSAPrivateKey):
+        ca_data['cert_type'] = cert_type
+        return RSACertificateAuthority(**ca_data)
 
     else:
-        raise TypeError("Unsupported CA Private Key Type")
+        raise TypeError('Unsupported CA Private Key Type')
 
 
 __all__ = [
-    'get_ssh_certificate_authority'
+    'get_ssh_certificate_authority',
 ]
