@@ -14,13 +14,15 @@ __summary__ = (
     "Aspen SSH is an SSH Certificate Authority that can be used to sign SSH public keys."
     "Forked from Netflix BLESS at https://github.com/Netflix/bless and modified to remove the "
     "AWS components and use solely as a Python library."
+    "Also includes most of the code from https://github.com/EasyPost/ssh_certificate_parser for "
+    "parsing signed public certificates."
 )
 __uri__ = "https://github.com/thinkwelltwd/aspen_ssh"
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
-__author__ = "The BLESS developers & Dave Burkholder"
+__author__ = "The BLESS developers, EasyPost <oss@easypost.com> & Dave Burkholder"
 __email__ = "dave@thinkwelldesigns.com"
 
 __license__ = "Apache License, Version 2.0"
-__copyright__ = "Copyright 2016 {0}".format(__author__)
+__copyright__ = f"Copyright 2021 {__author__}"
