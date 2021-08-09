@@ -9,7 +9,7 @@ with open(os.path.join(ROOT, "aspen_ssh", "__about__.py")) as f:
     exec(f.read(), about)
 
 setup(
-    name=about["__title__"],
+    name=about["__name__"],
     version=about["__version__"],
     author=about["__author__"],
     author_email=about["__email__"],
@@ -24,7 +24,7 @@ setup(
         'tests': [
             'coverage',
             'pytest',
-            'pytest-mock'
-        ]
-    }
+            'pytest-mock',
+        ],
+    },
 )

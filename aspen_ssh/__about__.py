@@ -9,6 +9,7 @@ __all__ = [
     "__copyright__",
 ]
 
+__name__ = "aspen_ssh"
 __title__ = "Aspen SSH"
 __summary__ = (
     "Aspen SSH is an SSH Certificate Authority that can be used to sign SSH public keys."
@@ -19,7 +20,7 @@ __summary__ = (
 )
 __uri__ = "https://github.com/thinkwelltwd/aspen_ssh"
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 __author__ = "The BLESS developers, EasyPost <oss@easypost.com> & Dave Burkholder"
 __email__ = "dave@thinkwelldesigns.com"
