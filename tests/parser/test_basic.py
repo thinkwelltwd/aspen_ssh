@@ -61,3 +61,12 @@ def test_dsa_cert():
     assert d['cert_type'] == 'SSH2_CERT_TYPE_HOST'
     assert d['critical_options'] == []
     assert d['extensions'] == []
+
+
+def test_forever_valid_cert():
+    with open('tests/parser/data/forever_valid_host_key.pub', 'rb') as f:
+        cert = SSHCertificate.from_bytes(f.read())
+    assert cert.valid_after == datetime.datetime(1970, 1, 1, 0, 0, 0)
+    today = datetime.datetime.now().replace(minute=0, hour=0, second=0, microsecond=0)
+    valid_before = today.replace(year=today.year + 1000)
+    assert cert.valid_before == valid_before

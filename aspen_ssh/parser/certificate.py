@@ -1,7 +1,7 @@
 import base64
 import hashlib
 import enum
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .exceptions import UnsupportedKeyTypeError
 from .helpers import (
@@ -130,7 +130,12 @@ class SSHCertificate:
         valid_after, blob = take_u64(blob)
         valid_after = datetime.utcfromtimestamp(valid_after)
         valid_before, blob = take_u64(blob)
-        valid_before = datetime.utcfromtimestamp(valid_before)
+        try:
+            valid_before = datetime.utcfromtimestamp(valid_before)
+        except OverflowError:
+            # if valid forever, then set expiration at 1000 years from today
+            today = datetime.now().replace(minute=0, hour=0, second=0, microsecond=0)
+            valid_before = today.replace(year=today.year + 1000)
         critical_options, blob = take_list(blob, take_pascal_string)
         extensions, blob = take_list(blob, take_pascal_string)
         unknown, blob = take_pascal_bytestring(blob)
